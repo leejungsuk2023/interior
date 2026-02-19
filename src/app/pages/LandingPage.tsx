@@ -14,7 +14,7 @@ export function LandingPage() {
   const defaultHeroUrl =
     "https://images.unsplash.com/photo-1585503081214-2d3384d1f7b0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBjb21tZXJjaWFsJTIwb2ZmaWNlJTIwaW50ZXJpb3IlMjBkZXNpZ258ZW58MXx8fHwxNzcwNzg5MjMzfDA&ixlib=rb-4.1.0&q=80&w=1080";
 
-  const [portfolioItems, setPortfolioItems] = useState<{ image: string; tags: string[]; title: string; price: string; location: string }[]>([]);
+  const [portfolioItems, setPortfolioItems] = useState<{ id: number; image: string; tags: string[]; title: string; price: string; location: string }[]>([]);
   const [reviews, setReviews] = useState<Review[]>(defaultReviews);
   const [heroImageUrl, setHeroImageUrl] = useState(defaultHeroUrl);
   const [loading, setLoading] = useState(true);
@@ -32,6 +32,7 @@ export function LandingPage() {
         if (heroUrl && heroUrl.trim()) setHeroImageUrl(heroUrl.trim());
         setPortfolioItems(
           portfolios.slice(0, 3).map((p) => ({
+            id: p.id,
             image: p.imageUrl.startsWith("http") ? p.imageUrl : `https://images.unsplash.com/photo-1676716244847-3fae1a2afb5b?w=1080`,
             tags: [p.industry, p.area],
             title: p.name,
@@ -134,10 +135,10 @@ export function LandingPage() {
             ) : portfolioItems.length === 0 ? (
               <div className="md:col-span-3 text-center py-12 text-gray-500">등록된 프로젝트가 없습니다.</div>
             ) : (
-            portfolioItems.map((item, index) => (
+            portfolioItems.map((item) => (
               <Link 
-                key={index} 
-                to="/portfolio"
+                key={item.id} 
+                to={`/portfolio/${item.id}`}
                 className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100"
               >
                 <div className="aspect-[4/3] overflow-hidden relative">

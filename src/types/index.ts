@@ -29,6 +29,8 @@ export interface Portfolio {
   style: string;
   duration: string;
   imageUrl: string;
+  /** 갤러리용 이미지 URL 배열 (비어 있으면 imageUrl만 사용) */
+  imageUrls?: string[];
   createdAt?: string;
 }
 
@@ -73,4 +75,6 @@ export interface CreatePortfolioInput {
   style: string;
   duration: string;
   imageUrl: string;
+  /** 추가 이미지 URL (한 줄에 하나, 갤러리용) */
+  imageUrls?: string[];
 }

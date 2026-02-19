@@ -26,6 +26,7 @@ export function AdminPage() {
     style: "",
     duration: "",
     imageUrl: "",
+    imageUrlsText: "",
   });
 
   useEffect(() => {
@@ -133,6 +134,11 @@ export function AdminPage() {
     }
 
     try {
+      const extraUrls = newPortfolio.imageUrlsText
+        .trim()
+        .split(/\n/)
+        .map((s) => s.trim())
+        .filter(Boolean);
       const created = await createPortfolio({
         name: newPortfolio.name,
         location: newPortfolio.location,
@@ -142,6 +148,7 @@ export function AdminPage() {
         style: newPortfolio.style,
         duration: newPortfolio.duration,
         imageUrl: newPortfolio.imageUrl,
+        imageUrls: extraUrls,
       });
       setPortfolios((prev) => [created, ...prev]);
       setShowPortfolioModal(false);
@@ -154,6 +161,7 @@ export function AdminPage() {
         style: "",
         duration: "",
         imageUrl: "",
+        imageUrlsText: "",
       });
       alert("포트폴리오가 성공적으로 추가되었습니다!");
     } catch (err) {
@@ -641,7 +649,7 @@ export function AdminPage() {
                 <label className="block text-sm font-semibold text-gray-900 mb-2">
                   <div className="flex items-center gap-2">
                     <ImageIcon className="w-4 h-4" />
-                    이미지 URL
+                    대표 이미지 URL
                   </div>
                 </label>
                 <input
@@ -663,6 +671,18 @@ export function AdminPage() {
                     />
                   </div>
                 )}
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                  추가 이미지 URL (갤러리용, 한 줄에 하나씩)
+                </label>
+                <textarea
+                  value={newPortfolio.imageUrlsText}
+                  onChange={(e) => setNewPortfolio({ ...newPortfolio, imageUrlsText: e.target.value })}
+                  placeholder={"https://example.com/photo1.jpg\nhttps://example.com/photo2.jpg"}
+                  rows={4}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-black focus:outline-none transition-colors resize-y"
+                />
               </div>
             </div>
 

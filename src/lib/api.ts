@@ -61,6 +61,19 @@ export async function updateLeadStatus(id: number, status: LeadStatus): Promise<
 
 // --- Portfolios ---
 
+function parseImageUrls(v: unknown): string[] {
+  if (Array.isArray(v)) return v.filter((x): x is string => typeof x === "string");
+  if (typeof v === "string") {
+    try {
+      const arr = JSON.parse(v);
+      return Array.isArray(arr) ? arr.filter((x: unknown): x is string => typeof x === "string") : [];
+    } catch {
+      return [];
+    }
+  }
+  return [];
+}
+
 function rowToPortfolio(row: Record<string, unknown>): Portfolio {
   return {
     id: Number(row.id),
@@ -72,6 +85,7 @@ function rowToPortfolio(row: Record<string, unknown>): Portfolio {
     style: (row.style as string) ?? "",
     duration: (row.duration as string) ?? "",
     imageUrl: (row.image_url as string) ?? "",
+    imageUrls: parseImageUrls(row.image_urls),
     createdAt: row.created_at as string | undefined,
   };
 }
@@ -85,7 +99,18 @@ export async function getPortfolios(): Promise<Portfolio[]> {
   return (data ?? []).map(rowToPortfolio);
 }
 
+export async function getPortfolio(id: number): Promise<Portfolio | null> {
+  const { data, error } = await supabase
+    .from("portfolios")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  return data ? rowToPortfolio(data as Record<string, unknown>) : null;
+}
+
 export async function createPortfolio(input: CreatePortfolioInput): Promise<Portfolio> {
+  const allUrls = [input.imageUrl, ...(input.imageUrls ?? [])].filter(Boolean);
   const { data, error } = await supabase
     .from("portfolios")
     .insert({
@@ -97,6 +122,7 @@ export async function createPortfolio(input: CreatePortfolioInput): Promise<Port
       style: input.style,
       duration: input.duration,
       image_url: input.imageUrl,
+      image_urls: allUrls,
     })
     .select()
     .single();

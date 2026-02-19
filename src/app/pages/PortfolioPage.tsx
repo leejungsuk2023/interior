@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
+import { Link } from "react-router";
 import { SlidersHorizontal, MapPin, DollarSign, Ruler, Tag } from "lucide-react";
 import { getPortfolios } from "../../lib/api";
 
 type ProjectItem = {
+  id: number;
   image: string;
   name: string;
   location: string;
@@ -30,6 +32,7 @@ export function PortfolioPage() {
       .then((list) => {
         setPortfolioProjects(
           list.map((p) => ({
+            id: p.id,
             image: p.imageUrl.startsWith("http") ? p.imageUrl : `https://images.unsplash.com/photo-1676716244847-3fae1a2afb5b?w=1080`,
             name: p.name,
             location: p.location,
@@ -182,10 +185,11 @@ export function PortfolioPage() {
           {!loading && visibleProjects.length === 0 && (
             <div className="col-span-full text-center py-16 text-gray-500">등록된 프로젝트가 없습니다.</div>
           )}
-          {visibleProjects.map((project, index) => (
-            <div 
-              key={index} 
-              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 cursor-pointer"
+          {visibleProjects.map((project) => (
+            <Link
+              key={project.id}
+              to={`/portfolio/${project.id}`}
+              className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 block"
             >
               {/* Project Image */}
               <div className="aspect-[4/3] overflow-hidden relative">
@@ -229,7 +233,7 @@ export function PortfolioPage() {
                   <div className="text-3xl font-light text-black">{project.budget}</div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
