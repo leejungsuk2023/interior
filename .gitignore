@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Env (API keys 등 - 절대 커밋하지 마세요)
+.env
+.env.local
+.env.*.local
+
+# Build
+dist/
+
+# IDE / OS
+.DS_Store
+*.log
